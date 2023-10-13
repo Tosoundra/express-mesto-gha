@@ -1,16 +1,17 @@
 const mongoose = require('mongoose');
 
-const { Schema } = mongoose;
-const CardSchema = new Schema({
+const CardSchema = new mongoose.Schema({
   name: {
     type: String,
     minlength: 2,
     maxlength: 30,
     required: true,
+    trim: true,
   },
   link: {
     type: String,
     required: true,
+    trim: true,
   },
   owner: {
     type: mongoose.Types.ObjectId,

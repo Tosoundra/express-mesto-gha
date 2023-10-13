@@ -1,6 +1,10 @@
 const { Error } = require('mongoose');
 const { getUserError } = require('../Errors/GetQueryError');
-const { userValidationError } = require('../Errors/ValidationError');
+const {
+  userValidationError,
+  userUpdateValidationError,
+  userUpdateAvatarValidationError,
+} = require('../Errors/ValidationError');
 const { UserModel } = require('../models/user');
 const { serverError } = require('../Errors/InternalServerError');
 
@@ -20,6 +24,7 @@ module.exports.createUser = (req, res) => {
         res
           .statusCode(serverError.statusCode)
           .send({ message: serverError.message });
+        return;
       }
     });
 };
@@ -46,7 +51,11 @@ module.exports.getUser = (req, res) => {
 
 module.exports.updateUserInfo = (req, res) => {
   const { name, about } = req.body;
-
+  if (!(name || about)) {
+    res
+      .status(userUpdateValidationError.statusCode)
+      .send({ message: userUpdateValidationError.message });
+  }
   UserModel.findByIdAndUpdate(
     req.params.id,
     { name, about },
@@ -71,7 +80,11 @@ module.exports.updateUserInfo = (req, res) => {
 
 module.exports.updateUserAvatar = (req, res) => {
   const { avatar } = req.body;
-
+  if (!avatar) {
+    res
+      .status(userUpdateAvatarValidationError.statusCode)
+      .send({ message: userUpdateAvatarValidationError.message });
+  }
   UserModel.findByIdAndUpdate(
     req.params.id,
     { avatar },
